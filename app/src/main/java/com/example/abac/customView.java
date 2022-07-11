@@ -1,5 +1,6 @@
 package com.example.abac;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -65,21 +66,18 @@ public class customView extends View {
     }
 
     private void drawSquares(Canvas canvas) {
-
+        paint.setColor(Color.RED);
         for (int i = 0 ; i < amtOfRows; i++){
             for (int j = 0; j <amtOfRows; j++){
 
-                if (!grid[i][j]) {
-                    canvas.drawColor(Color.RED);
-                } else{
-                    canvas.drawColor(Color.GREEN);
+                if (grid[i][j]) {
+                    canvas.drawRect(
+                            i * cellWidth,
+                            j * cellWidth,
+                            (i * cellWidth) + cellWidth,
+                            (j * cellWidth) + cellWidth,
+                            paint);
                 }
-                canvas.drawRect(
-                        i * cellWidth,
-                        j * cellWidth,
-                        (i * cellWidth) + cellWidth,
-                        (j * cellWidth) + cellWidth,
-                        paint);
             }
         }
 
@@ -97,6 +95,7 @@ public class customView extends View {
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
