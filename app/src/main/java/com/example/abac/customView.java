@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 
 public class customView extends View {
     private static final String TAG = customView.class.getSimpleName();
-    private boolean[][] grid;
+    private int[][] grid;
     private int amtOfRows;
     private int cellWidth;
 
@@ -34,15 +34,15 @@ public class customView extends View {
 
     public void initGrid(int size){
         this.amtOfRows = size;
-        grid = new boolean[size][size];
+        grid = new int[size][size];
         paint.setColor(Color.BLACK);
     }
 
-    public void updateGrid(boolean[][] newGrid){
+    public void updateGrid(int[][] newGrid){
         this.grid = newGrid;
     }
 
-    public boolean[][] getGrid() {
+    public int[][] getGrid() {
         return grid;
     }
 
@@ -57,7 +57,6 @@ public class customView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.d(TAG, "onDraw");
-
         cellWidth = getWidth() / amtOfRows;
 
         canvas.drawColor(Color.GREEN);
@@ -70,7 +69,7 @@ public class customView extends View {
         for (int i = 0 ; i < amtOfRows; i++){
             for (int j = 0; j <amtOfRows; j++){
 
-                if (grid[i][j]) {
+                if (grid[i][j]==1) {
                     canvas.drawRect(
                             i * cellWidth,
                             j * cellWidth,
@@ -104,9 +103,11 @@ public class customView extends View {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int i = (int) (event.getX() / cellWidth);
             int j = (int) (event.getY() / cellWidth);
-
-            grid[i][j] = !grid[i][j];
-
+            if(grid[i][j]==1){
+                grid[i][j] = 0;
+            } else if (grid[i][j]==0) {
+                grid[i][j] = 1;
+            }
             // redraw the grid
             invalidate();
         }
