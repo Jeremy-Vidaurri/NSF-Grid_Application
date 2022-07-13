@@ -5,16 +5,15 @@ import androidx.annotation.NonNull;
 public class PolicyModel {
     private int PolicyID;
     private String PolicyName;
-    private int Width;
-    private int Length;
+    private int Size;
+
 
     // Constructors
 
-    public PolicyModel(int policyID, String policyName, int width, int length) {
+    public PolicyModel(int policyID, String policyName, int size) {
         this.PolicyID = policyID;
         this.PolicyName = policyName;
-        this.Width = width;
-        this.Length = length;
+        this.Size = size;
     }
 
     public PolicyModel() {
@@ -26,8 +25,7 @@ public class PolicyModel {
         return "PolicyModel{" +
                 "PolicyID=" + PolicyID +
                 ", PolicyName='" + PolicyName + '\'' +
-                ", Width=" + Width +
-                ", Length=" + Length +
+                ", Size=" + Size +
                 '}';
     }
 
@@ -48,19 +46,12 @@ public class PolicyModel {
         PolicyName = policyName;
     }
 
-    public int getWidth() {
-        return Width;
+    public int getSize() {
+        return Size;
     }
 
-    public void setWidth(int width) {
-        Width = width;
+    public void setSize(int size) {
+        Size = size;
     }
 
-    public int getLength() {
-        return Length;
-    }
-
-    public void setLength(int length) {
-        Length = length;
-    }
 }

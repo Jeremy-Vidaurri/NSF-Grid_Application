@@ -15,10 +15,8 @@ import androidx.annotation.Nullable;
 public class customView extends View {
     private static final String TAG = customView.class.getSimpleName();
     private int[][] grid;
-    private int gridWidth;
-    private int gridLength;
+    private int amtRows;
     private int cellWidth;
-
 
     private final Paint paint = new Paint();
 
@@ -34,10 +32,9 @@ public class customView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    public void initGrid(int width, int length){
-        this.gridLength = length;
-        this.gridWidth = width;
-        grid = new int[width][length];
+    public void initGrid(int size){
+        this.amtRows = size;
+        grid = new int[size][size];
         paint.setColor(Color.BLACK);
     }
 
@@ -56,21 +53,23 @@ public class customView extends View {
         setMeasuredDimension(size, size);
     }
 
+    // Ran every time invalidate() is called.
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.d(TAG, "onDraw");
-        cellWidth = getWidth() / gridWidth;
+        cellWidth = getWidth() / amtRows;
 
         canvas.drawColor(Color.GREEN);
         drawSquares(canvas);
         drawLines(canvas);
     }
 
+    // If the value in the grid is 1, paint it red.
     private void drawSquares(Canvas canvas) {
         paint.setColor(Color.RED);
-        for (int i = 0 ; i < gridWidth; i++){
-            for (int j = 0; j <gridLength; j++){
+        for (int i = 0 ; i < amtRows; i++){
+            for (int j = 0; j <amtRows; j++){
 
                 if (grid[i][j]==1) {
                     canvas.drawRect(
@@ -85,9 +84,10 @@ public class customView extends View {
 
     }
 
+    // Used to separate the squares
     private void drawLines(Canvas canvas) {
         paint.setColor(Color.BLACK);
-        for(int i = 1 ; i < gridWidth; i ++){
+        for(int i = 1 ; i < amtRows; i ++){
             int offset = (i * cellWidth);
             // Draw the vertical lines
             canvas.drawLine(offset, 0f, offset, getHeight(), paint  );
@@ -103,9 +103,11 @@ public class customView extends View {
 
         Log.d(TAG, "onTouch X:" + event.getX() + " Y:" + event.getY());
 
+        // When a square is touched, get the corresponding position in the matrix and change its value
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int i = (int) (event.getX() / cellWidth);
             int j = (int) (event.getY() / cellWidth);
+            Log.d(TAG,"i:" + i + "j:" + j);
             if(grid[i][j]==1){
                 grid[i][j] = 0;
             } else if (grid[i][j]==0) {

@@ -14,10 +14,9 @@ import androidx.annotation.Nullable;
 public class dbHelper extends SQLiteOpenHelper {
 
     public static final String POLICY_TABLE_NAME = "Policies";
-    public static final String COLUMN_NAME_POLICY_ID = "PolicyID"; // Used as a primary key for the policy table and a foreign key for matrix table
+    public static final String COLUMN_NAME_POLICY_ID = "PolicyID";
     public static final String COLUMN_NAME_POLICY_NAME = "PolicyName";
-    public static final String COLUMN_NAME_WIDTH = "Width";
-    public static final String COLUMN_NAME_LENGTH = "Length";
+    public static final String COLUMN_NAME_SIZE = "Size";
 
     public static final String MATRIX_TABLE_NAME = "Matrix";
     public static final String COLUMN_NAME_COLUMN_ID = "ColumnID";
@@ -36,8 +35,7 @@ public class dbHelper extends SQLiteOpenHelper {
         String SQL_CREATE_POLICIES_TABLE = "CREATE TABLE " + POLICY_TABLE_NAME + " (" +
                     COLUMN_NAME_POLICY_ID  + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     COLUMN_NAME_POLICY_NAME + " TEXT," +
-                    COLUMN_NAME_WIDTH + " INTEGER," +
-                    COLUMN_NAME_LENGTH + " INTEGER" + ")";
+                    COLUMN_NAME_SIZE + " INTEGER" + ")";
 
         String SQL_CREATE_MATRIX_TABLE = "CREATE TABLE " + MATRIX_TABLE_NAME + " (" +
                     COLUMN_NAME_POLICY_ID + " INTEGER," +
@@ -57,30 +55,41 @@ public class dbHelper extends SQLiteOpenHelper {
 
     }
 
+    // Add a policy to the Policies table
     public boolean addPolicy(PolicyModel policyModel){
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
         cv.put(COLUMN_NAME_POLICY_NAME, policyModel.getPolicyName());
-        cv.put(COLUMN_NAME_LENGTH, policyModel.getLength());
-        cv.put(COLUMN_NAME_WIDTH, policyModel.getWidth());
+        cv.put(COLUMN_NAME_SIZE, policyModel.getSize());
+
 
         long insert = db.insert(POLICY_TABLE_NAME, null, cv);
-
         return insert != -1;
     }
 
-    public boolean addValue(MatrixModel matrixModel){
+    // Insert values into the matrix. Primarily used by initMatrix
+    public boolean addValue(int policyID, int row, int column, int value){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
-        cv.put(COLUMN_NAME_VALUE, matrixModel.getValue());
-        cv.put(COLUMN_NAME_ROW_ID, matrixModel.getRowID());
-        cv.put(COLUMN_NAME_COLUMN_ID, matrixModel.getColumnID());
+        cv.put(COLUMN_NAME_POLICY_ID,policyID);
+        cv.put(COLUMN_NAME_VALUE, value);
+        cv.put(COLUMN_NAME_ROW_ID, row);
+        cv.put(COLUMN_NAME_COLUMN_ID, column);
 
         long insert = db.insert(MATRIX_TABLE_NAME, null, cv);
 
         return insert != -1;
+    }
+
+    // Used to fill a matrix when a new policy is created.
+    public void initMatrix(int policyID,int size) {
+        for(int i =0;i<size;i++){
+            for (int j=0;j<size;j++){
+                addValue(policyID,i,j,1);
+            }
+        }
     }
 }
