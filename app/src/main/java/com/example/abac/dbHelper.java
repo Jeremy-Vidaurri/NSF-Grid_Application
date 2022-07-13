@@ -56,7 +56,7 @@ public class dbHelper extends SQLiteOpenHelper {
     }
 
     // Add a policy to the Policies table
-    public boolean addPolicy(PolicyModel policyModel){
+    public void addPolicy(PolicyModel policyModel){
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
@@ -64,13 +64,11 @@ public class dbHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME_POLICY_NAME, policyModel.getPolicyName());
         cv.put(COLUMN_NAME_SIZE, policyModel.getSize());
 
-
-        long insert = db.insert(POLICY_TABLE_NAME, null, cv);
-        return insert != -1;
+        db.insert(POLICY_TABLE_NAME, null, cv);
     }
 
     // Insert values into the matrix. Primarily used by initMatrix
-    public boolean addValue(int policyID, int row, int column, int value){
+    public void addValue(int policyID, int row, int column, int value){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cv = new ContentValues();
 
@@ -79,9 +77,7 @@ public class dbHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME_ROW_ID, row);
         cv.put(COLUMN_NAME_COLUMN_ID, column);
 
-        long insert = db.insert(MATRIX_TABLE_NAME, null, cv);
-
-        return insert != -1;
+        db.insert(MATRIX_TABLE_NAME, null, cv);
     }
 
     // Used to fill a matrix when a new policy is created.
@@ -91,5 +87,18 @@ public class dbHelper extends SQLiteOpenHelper {
                 addValue(policyID,i,j,1);
             }
         }
+    }
+
+    // Update a specific value within a matrix
+    public void updateMatrix(int policyID, int row, int column, int value){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_NAME_POLICY_ID,policyID);
+        cv.put(COLUMN_NAME_ROW_ID, row);
+        cv.put(COLUMN_NAME_COLUMN_ID, column);
+        cv.put(COLUMN_NAME_VALUE,value);
+
+        db.update(MATRIX_TABLE_NAME,cv, "policyID="+policyID+" AND row="+row+" AND column="+column,null);
     }
 }
