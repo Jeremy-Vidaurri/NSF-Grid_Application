@@ -15,8 +15,10 @@ import androidx.annotation.Nullable;
 public class customView extends View {
     private static final String TAG = customView.class.getSimpleName();
     private int[][] grid;
-    private int amtOfRows;
+    private int gridWidth;
+    private int gridLength;
     private int cellWidth;
+
 
     private final Paint paint = new Paint();
 
@@ -32,9 +34,10 @@ public class customView extends View {
         super(context, attrs, defStyleAttr);
     }
 
-    public void initGrid(int size){
-        this.amtOfRows = size;
-        grid = new int[size][size];
+    public void initGrid(int width, int length){
+        this.gridLength = length;
+        this.gridWidth = width;
+        grid = new int[width][length];
         paint.setColor(Color.BLACK);
     }
 
@@ -57,7 +60,7 @@ public class customView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.d(TAG, "onDraw");
-        cellWidth = getWidth() / amtOfRows;
+        cellWidth = getWidth() / gridWidth;
 
         canvas.drawColor(Color.GREEN);
         drawSquares(canvas);
@@ -66,8 +69,8 @@ public class customView extends View {
 
     private void drawSquares(Canvas canvas) {
         paint.setColor(Color.RED);
-        for (int i = 0 ; i < amtOfRows; i++){
-            for (int j = 0; j <amtOfRows; j++){
+        for (int i = 0 ; i < gridWidth; i++){
+            for (int j = 0; j <gridLength; j++){
 
                 if (grid[i][j]==1) {
                     canvas.drawRect(
@@ -84,7 +87,7 @@ public class customView extends View {
 
     private void drawLines(Canvas canvas) {
         paint.setColor(Color.BLACK);
-        for(int i = 1 ; i < amtOfRows; i ++){
+        for(int i = 1 ; i < gridWidth; i ++){
             int offset = (i * cellWidth);
             // Draw the vertical lines
             canvas.drawLine(offset, 0f, offset, getHeight(), paint  );

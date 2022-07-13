@@ -1,5 +1,6 @@
 package com.example.abac;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -54,5 +55,32 @@ public class dbHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
 
+    }
+
+    public boolean addPolicy(PolicyModel policyModel){
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_NAME_POLICY_NAME, policyModel.getPolicyName());
+        cv.put(COLUMN_NAME_LENGTH, policyModel.getLength());
+        cv.put(COLUMN_NAME_WIDTH, policyModel.getWidth());
+
+        long insert = db.insert(POLICY_TABLE_NAME, null, cv);
+
+        return insert != -1;
+    }
+
+    public boolean addValue(MatrixModel matrixModel){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues cv = new ContentValues();
+
+        cv.put(COLUMN_NAME_VALUE, matrixModel.getValue());
+        cv.put(COLUMN_NAME_ROW_ID, matrixModel.getRowID());
+        cv.put(COLUMN_NAME_COLUMN_ID, matrixModel.getColumnID());
+
+        long insert = db.insert(MATRIX_TABLE_NAME, null, cv);
+
+        return insert != -1;
     }
 }

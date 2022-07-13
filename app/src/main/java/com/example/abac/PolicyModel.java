@@ -1,5 +1,7 @@
 package com.example.abac;
 
+import androidx.annotation.NonNull;
+
 public class PolicyModel {
     private int PolicyID;
     private String PolicyName;
@@ -9,15 +11,16 @@ public class PolicyModel {
     // Constructors
 
     public PolicyModel(int policyID, String policyName, int width, int length) {
-        PolicyID = policyID;
-        PolicyName = policyName;
-        Width = width;
-        Length = length;
+        this.PolicyID = policyID;
+        this.PolicyName = policyName;
+        this.Width = width;
+        this.Length = length;
     }
 
     public PolicyModel() {
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "PolicyModel{" +
