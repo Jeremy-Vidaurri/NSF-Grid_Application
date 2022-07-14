@@ -2,6 +2,7 @@ package com.example.abac;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -17,34 +18,37 @@ public class customView extends View {
     private int[][] grid;
     private int amtRows;
     private int cellWidth;
-
+    dbHelper dbHelper;
+    SQLiteDatabase db;
     private final Paint paint = new Paint();
+
 
     public customView(Context context) {
         super(context);
+        init(context);
     }
 
     public customView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init(context);
     }
 
     public customView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init(context);
     }
+
+    public void init(Context context){
+        dbHelper = new dbHelper(context);
+        db = dbHelper.getWritableDatabase();
+    }
+
 
     public void initGrid(int size){
         this.amtRows = size;
-        grid = new int[size][size];
         paint.setColor(Color.BLACK);
     }
 
-    public void updateGrid(int[][] newGrid){
-        this.grid = newGrid;
-    }
-
-    public int[][] getGrid() {
-        return grid;
-    }
 
     @Override
     public void onMeasure(int widthSpec, int heightSpec) {
@@ -71,7 +75,7 @@ public class customView extends View {
         for (int i = 0 ; i < amtRows; i++){
             for (int j = 0; j <amtRows; j++){
 
-                if (grid[i][j]==1) {
+                if (dbHelper.getValue(1,i,j) == 0) { // FIX: Add function to pass policyID? I'm not sure how to get the policy id otherwise.
                     canvas.drawRect(
                             i * cellWidth,
                             j * cellWidth,
@@ -108,10 +112,10 @@ public class customView extends View {
             int i = (int) (event.getX() / cellWidth);
             int j = (int) (event.getY() / cellWidth);
             Log.d(TAG,"i:" + i + "j:" + j);
-            if(grid[i][j]==1){
-                grid[i][j] = 0;
-            } else if (grid[i][j]==0) {
-                grid[i][j] = 1;
+            if(dbHelper.getValue(1,i,j)==1){ // Once again, pass policyid somehow
+                dbHelper.updateMatrix(1,i,j,0);
+            } else if (dbHelper.getValue(1,i,j)==0) {
+                dbHelper.updateMatrix(1,i,j,1);
             }
             // redraw the grid
             invalidate();
