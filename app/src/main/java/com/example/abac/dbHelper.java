@@ -100,14 +100,14 @@ public class dbHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME_COLUMN_ID, column);
         cv.put(COLUMN_NAME_VALUE,value);
 
-        db.update(MATRIX_TABLE_NAME,cv, "policyID="+policyID+" AND row="+row+" AND column="+column,null);
+        db.update(MATRIX_TABLE_NAME,cv, "policyID="+policyID+" AND rowID="+row+" AND columnID="+column,null);
     }
 
     // Retrieve a specific value within a matrix.
     public int getValue(int policyID, int row, int column){
         SQLiteDatabase db = this.getWritableDatabase();
         int value;
-        Cursor cur = db.query(MATRIX_TABLE_NAME,new String[]{COLUMN_NAME_VALUE},"policyID="+policyID+" AND row="+row+" AND column="+column,null,null,null,null);
+        Cursor cur = db.query(MATRIX_TABLE_NAME,new String[]{COLUMN_NAME_VALUE},"policyID="+policyID+" AND rowID="+row+" AND columnID="+column,null,null,null,null);
 
         if (cur!=null){
             cur.moveToFirst();

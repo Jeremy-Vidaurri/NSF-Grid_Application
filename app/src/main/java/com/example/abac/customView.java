@@ -15,7 +15,6 @@ import androidx.annotation.Nullable;
 
 public class customView extends View {
     private static final String TAG = customView.class.getSimpleName();
-    private int[][] grid;
     private int amtRows;
     private int cellWidth;
     dbHelper dbHelper;

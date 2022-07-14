@@ -8,11 +8,9 @@ import android.os.Bundle;
 
 
 /* TODO:
- * Change customView.java to work with the matrix. Somehow need to pass the policyID to the grids. DO NOT create a function to get each matrix value. Just change them as you go.
- * Add a query to get the size of the matrix.
- * Finish else statement in MainActivity to load the first policy (use min() in case id 1 gets deleted.)
- * Implement a way to add more policies.
- * Spinner (?) to display the different policies
+  * Implement a method to get current policyID.
+  * Implement a way to add more policies.
+  * Spinner (?) to display the different policies.
  */
 
 
@@ -27,19 +25,28 @@ public class MainActivity extends AppCompatActivity {
         dbHelper dbHelper = new dbHelper(MainActivity.this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         PolicyModel policyModel;
+        int curPolicy;
 
 
         // Check if the table is empty. If so, create a 20x20 table
         Cursor cur = db.rawQuery("SELECT COUNT(*) FROM " + com.example.abac.dbHelper.POLICY_TABLE_NAME, null);
-
+        grid = findViewById(R.id.grid);
         if (cur!=null){
             cur.moveToFirst();
             if (cur.getInt(0)==0){
-                grid = findViewById(R.id.grid);
                 policyModel = new PolicyModel(-1, "Example Policy",20);
                 dbHelper.addPolicy(policyModel);
                 dbHelper.initMatrix(1,20);
                 grid.initGrid(20);
+            }else{
+                cur = db.rawQuery("SELECT MIN(PolicyID) FROM Policies",null);
+                cur.moveToFirst();
+                curPolicy = cur.getInt(0);
+                cur = db.rawQuery("SELECT size FROM Policies WHERE PolicyID=" + curPolicy,null);
+                cur.moveToFirst();
+                int size = cur.getInt(0);
+
+                grid.initGrid(size);
             }
         }
 
