@@ -2,6 +2,7 @@ package com.example.abac;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -100,5 +101,21 @@ public class dbHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME_VALUE,value);
 
         db.update(MATRIX_TABLE_NAME,cv, "policyID="+policyID+" AND row="+row+" AND column="+column,null);
+    }
+
+    // Retrieve a specific value within a matrix.
+    public int getValue(int policyID, int row, int column){
+        SQLiteDatabase db = this.getWritableDatabase();
+        int value;
+        Cursor cur = db.query(MATRIX_TABLE_NAME,new String[]{COLUMN_NAME_VALUE},"policyID="+policyID+" AND row="+row+" AND column="+column,null,null,null,null);
+
+        if (cur!=null){
+            cur.moveToFirst();
+            value = cur.getInt(0);
+            cur.close();
+        } else
+            value = -1;
+
+        return value;
     }
 }

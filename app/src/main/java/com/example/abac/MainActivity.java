@@ -6,6 +6,16 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
+
+/* TODO:
+ * Change customView.java to work with the matrix. Somehow need to pass the policyID to the grids. DO NOT create a function to get each matrix value. Just change them as you go.
+ * Add a query to get the size of the matrix.
+ * Finish else statement in MainActivity to load the first policy (use min() in case id 1 gets deleted.)
+ * Implement a way to add more policies.
+ * Spinner (?) to display the different policies
+ */
+
+
 public class MainActivity extends AppCompatActivity {
 
     private customView grid;
@@ -28,10 +38,8 @@ public class MainActivity extends AppCompatActivity {
                 grid = findViewById(R.id.grid);
                 policyModel = new PolicyModel(-1, "Example Policy",20);
                 dbHelper.addPolicy(policyModel);
-
-                grid.initGrid(20);
                 dbHelper.initMatrix(1,20);
-                grid.invalidate();
+                grid.initGrid(20);
             }
         }
 
@@ -39,6 +47,6 @@ public class MainActivity extends AppCompatActivity {
             cur.close();
         }
 
-
+        grid.invalidate();
     }
 }
