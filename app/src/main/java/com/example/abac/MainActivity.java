@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        grid = findViewById(R.id.grid);
+
         dbHelper dbHelper = new dbHelper(MainActivity.this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         PolicyModel policyModel;
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Check if the table is empty. If so, create a 20x20 table
         Cursor cur = db.rawQuery("SELECT COUNT(*) FROM " + com.example.abac.dbHelper.POLICY_TABLE_NAME, null);
-        grid = findViewById(R.id.grid);
+
         if (cur!=null){
             cur.moveToFirst();
             if (cur.getInt(0)==0){
