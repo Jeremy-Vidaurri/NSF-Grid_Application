@@ -39,11 +39,12 @@ public class dbHelper extends SQLiteOpenHelper {
                     COLUMN_NAME_SIZE + " INTEGER" + ")";
 
         String SQL_CREATE_MATRIX_TABLE = "CREATE TABLE " + MATRIX_TABLE_NAME + " (" +
-                    COLUMN_NAME_POLICY_ID + " INTEGER," +
-                    COLUMN_NAME_COLUMN_ID + " INTEGER," +
-                    COLUMN_NAME_ROW_ID + " INTEGER," +
-                    COLUMN_NAME_VALUE + " INTEGER," +
-                    "PRIMARY KEY ("+COLUMN_NAME_POLICY_ID+","+COLUMN_NAME_COLUMN_ID+"," + COLUMN_NAME_ROW_ID +"))";
+                COLUMN_NAME_POLICY_ID + " INTEGER," +
+                COLUMN_NAME_COLUMN_ID + " INTEGER," +
+                COLUMN_NAME_ROW_ID + " INTEGER," +
+                COLUMN_NAME_VALUE + " INTEGER," +
+                "PRIMARY KEY (" +COLUMN_NAME_POLICY_ID+","+COLUMN_NAME_COLUMN_ID+"," +
+                                COLUMN_NAME_ROW_ID +"))";
 
 
         db.execSQL(SQL_CREATE_POLICIES_TABLE);
@@ -100,14 +101,17 @@ public class dbHelper extends SQLiteOpenHelper {
         cv.put(COLUMN_NAME_COLUMN_ID, column);
         cv.put(COLUMN_NAME_VALUE,value);
 
-        db.update(MATRIX_TABLE_NAME,cv, "policyID="+policyID+" AND rowID="+row+" AND columnID="+column,null);
+        db.update(MATRIX_TABLE_NAME,cv, "policyID="+policyID+
+                " AND rowID="+row+" AND columnID="+column,null);
     }
 
     // Retrieve a specific value within a matrix.
     public int getValue(int policyID, int row, int column){
         SQLiteDatabase db = this.getWritableDatabase();
         int value;
-        Cursor cur = db.query(MATRIX_TABLE_NAME,new String[]{COLUMN_NAME_VALUE},"policyID="+policyID+" AND rowID="+row+" AND columnID="+column,null,null,null,null);
+        Cursor cur = db.query(MATRIX_TABLE_NAME,new String[]{COLUMN_NAME_VALUE},
+                "policyID="+policyID+" AND rowID="+row+ " AND columnID="+column
+                ,null,null,null,null);
 
         if (cur!=null){
             cur.moveToFirst();
@@ -117,5 +121,42 @@ public class dbHelper extends SQLiteOpenHelper {
             value = -1;
 
         return value;
+    }
+
+    // Delete the given policy from both tables.
+    public void deletePolicy(int policyID){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(POLICY_TABLE_NAME,"policyID="+policyID,null);
+        db.delete(MATRIX_TABLE_NAME,"policyID="+policyID,null);
+    }
+
+    // Retrieve all the policy names from the list. Used to display the policies to the user.
+    public String[] getPolicyNames(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        // Count the total number of policies.
+        Cursor cur = db.rawQuery("SELECT COUNT("+ COLUMN_NAME_POLICY_NAME +") FROM "
+                + POLICY_TABLE_NAME,null);
+        cur.moveToFirst();
+
+        // Set the total number of columns so that we don't traverse too far or waste space.
+        int total = cur.getInt(0);
+        String[] names = new String[total];
+
+        // Select the entire column
+        cur = db.query(POLICY_TABLE_NAME,new String[]{COLUMN_NAME_POLICY_NAME},null,
+                null,null,null,null,null);
+        cur.moveToFirst();
+
+        int i=0;
+        while(!cur.isAfterLast()){
+            names[i]=cur.getString(1);
+            i++;
+            cur.moveToNext();
+        }
+
+        if (cur != null) {
+            cur.close();
+        }
+        return names;
     }
 }

@@ -8,10 +8,14 @@ import android.os.Bundle;
 
 
 /* TODO:
+  * Add a button to send the matrix to drone.
   * Implement a method to get current policyID.
-  * Implement a way to add more policies.
-  * Spinner (?) to display the different policies.
- */
+  * Implement a button/screen to add a new policy.
+  * In adding policy screen, implement error checking for fields before adding a new policy.
+  * Spinner to display/load the different policies. Display the currently loaded policy in it.
+  * Add a button delete the currently loaded policy. Don't allow the user to delete the last policy.
+  * Implement yellow zones
+*/
 
 
 public class MainActivity extends AppCompatActivity {
@@ -49,11 +53,10 @@ public class MainActivity extends AppCompatActivity {
                 grid.initGrid(size);
             }
         }
+        grid.invalidate();
 
         if (cur != null) {
             cur.close();
         }
-
-        grid.invalidate();
     }
 }

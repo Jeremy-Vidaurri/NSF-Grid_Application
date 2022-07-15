@@ -17,6 +17,7 @@ public class customView extends View {
     private static final String TAG = customView.class.getSimpleName();
     private int amtRows;
     private int cellWidth;
+    private int curPolicy;
     dbHelper dbHelper;
     SQLiteDatabase db;
     private final Paint paint = new Paint();
@@ -106,17 +107,19 @@ public class customView extends View {
 
         Log.d(TAG, "onTouch X:" + event.getX() + " Y:" + event.getY());
 
-        // When a square is touched, get the corresponding position in the matrix and change its value
+        // When a square is touched, get the position in the matrix and change its value
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int i = (int) (event.getX() / cellWidth);
             int j = (int) (event.getY() / cellWidth);
             Log.d(TAG,"i:" + i + "j:" + j);
-            if(dbHelper.getValue(1,i,j)==1){ // Once again, pass policyid somehow
+
+            // Toggle between 0 and 1
+            if(dbHelper.getValue(1,i,j)==1){ // Once again, pass policyID somehow
                 dbHelper.updateMatrix(1,i,j,0);
             } else if (dbHelper.getValue(1,i,j)==0) {
                 dbHelper.updateMatrix(1,i,j,1);
             }
-            // redraw the grid
+            // Redraw the grid
             invalidate();
         }
 
