@@ -8,11 +8,11 @@ import android.os.Bundle;
 
 
 /* TODO:
-  * Add a button to send the matrix to drone.
+  * Implement method to send the matrix to drone.
   * Implement a method to get current policyID.
-  * Implement a button/screen to add a new policy.
-  * In adding policy screen, implement error checking for fields before adding a new policy.
-  * Spinner to display/load the different policies. Display the currently loaded policy in it.
+  * Implement a screen to add a new policy.
+  * Implement error checking for fields before adding a new policy.
+  * Display the currently loaded policy in spinner.
   * Add a button delete the currently loaded policy. Don't allow the user to delete the last policy.
   * Implement yellow zones
 */
