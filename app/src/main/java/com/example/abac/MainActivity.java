@@ -1,24 +1,34 @@
 package com.example.abac;
 
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 
 /* TODO:
   * Implement method to send the matrix to drone.
-  * Implement a screen to add a new policy.
+  * Add functionality to spinner
   * Implement error checking for fields before adding a new policy.
   * Add a button delete the currently loaded policy. Don't allow the user to delete the last policy.
   * Implement yellow zones
 */
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+
+    private static final String TAG = customView.class.getSimpleName();
 
     private customView grid;
     private final dbHelper dbHelper = new dbHelper(MainActivity.this);
@@ -26,12 +36,15 @@ public class MainActivity extends AppCompatActivity {
     private PolicyModel policyModel;
     private int curPolicy;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         grid = findViewById(R.id.grid);
         db = dbHelper.getWritableDatabase();
+        final FloatingActionButton button_add = findViewById(R.id.add_policy);
+
         updateSpinner();
 
         // Check if the table is empty. If so, create a 20x20 table
@@ -54,8 +67,11 @@ public class MainActivity extends AppCompatActivity {
         if (cur != null) {
             cur.close();
         }
-    }
 
+        button_add.setOnClickListener(v -> startActivity(new Intent(MainActivity.this,AddPolicy.class)));
+
+
+    }
     // Load the first policy. Used on initial load and when deleting the current policy.
     public void loadFirstPolicy(){
         // Select the first policyID in the table
@@ -85,4 +101,17 @@ public class MainActivity extends AppCompatActivity {
         Spinner spinner = this.findViewById(R.id.spinner);
         spinner.setAdapter(sca);
     }
+
+    // Used when selecting a policy on the Spinner.
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+        Log.d(TAG,"ID: " + id);
+    }
+
+    // Likely will not be used, but required as we implemented AdapterView.OnItemSelectedListener
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
 }
