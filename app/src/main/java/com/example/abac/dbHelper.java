@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -13,6 +14,8 @@ import androidx.annotation.Nullable;
  * 2 for yellow zones
  */
 public class dbHelper extends SQLiteOpenHelper {
+
+    private static final String TAG = customView.class.getSimpleName();
 
     public static final String POLICY_TABLE_NAME = "Policies";
     public static final String COLUMN_NAME_POLICY_ID = "PolicyID";
@@ -128,35 +131,5 @@ public class dbHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(POLICY_TABLE_NAME,"policyID="+policyID,null);
         db.delete(MATRIX_TABLE_NAME,"policyID="+policyID,null);
-    }
-
-    // Retrieve all the policy names from the list. Used to display the policies to the user.
-    public String[] getPolicyNames(){
-        SQLiteDatabase db = this.getWritableDatabase();
-        // Count the total number of policies.
-        Cursor cur = db.rawQuery("SELECT COUNT("+ COLUMN_NAME_POLICY_NAME +") FROM "
-                + POLICY_TABLE_NAME,null);
-        cur.moveToFirst();
-
-        // Set the total number of columns so that we don't traverse too far or waste space.
-        int total = cur.getInt(0);
-        String[] names = new String[total];
-
-        // Select the entire column
-        cur = db.query(POLICY_TABLE_NAME,new String[]{COLUMN_NAME_POLICY_NAME},null,
-                null,null,null,null,null);
-        cur.moveToFirst();
-
-        int i=0;
-        while(!cur.isAfterLast()){
-            names[i]=cur.getString(1);
-            i++;
-            cur.moveToNext();
-        }
-
-        if (cur != null) {
-            cur.close();
-        }
-        return names;
     }
 }
