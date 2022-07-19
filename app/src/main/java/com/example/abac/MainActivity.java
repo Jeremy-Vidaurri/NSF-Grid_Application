@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 dbHelper.addPolicy(policyModel);
                 dbHelper.initMatrix(1,20);
                 curPolicy=1;
-                grid.initGrid(20);
+                grid.initGrid(20,1);
             }else{
                 loadFirstPolicy();
             }
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         cur.moveToFirst();
         int size = cur.getInt(0);
 
-        grid.initGrid(size);
+        grid.initGrid(size,curPolicy);
         cur.close();
     }
 

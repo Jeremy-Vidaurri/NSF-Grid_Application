@@ -44,8 +44,9 @@ public class customView extends View {
     }
 
 
-    public void initGrid(int size){
+    public void initGrid(int size, int curPolicy){
         this.amtRows = size;
+        this.curPolicy =  curPolicy;
         paint.setColor(Color.BLACK);
     }
 
