@@ -1,5 +1,6 @@
 package com.example.abac;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,7 +21,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /* TODO:
   * Implement method to send the matrix to drone.
-  * Add a button delete the currently loaded policy. Don't allow the user to delete the last policy.
   * Implement yellow zones
 */
 
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         grid = findViewById(R.id.grid);
         db = dbHelper.getWritableDatabase();
         final FloatingActionButton button_add = findViewById(R.id.add_policy);
+        Button button_del = findViewById(R.id.delButton);
 
         updateSpinner();
         spinner.setOnItemSelectedListener(this);
@@ -69,6 +71,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         button_add.setOnClickListener(v -> startActivity(new Intent(MainActivity.this,AddPolicy.class)));
 
+        // Functionality for deleting the current policy.
+        button_del.setOnClickListener(view -> {
+            CharSequence text;
+
+            // Check that there is more than one policy left
+            Cursor cur1 = db.rawQuery("SELECT Count(PolicyID) FROM POLICIES",null);
+            cur1.moveToFirst();
+            if(cur1.getInt(0) != 1){
+                // Given that there is more than one policy left, display to the user that the policy has been deleted and remove it from the database.
+                cur1 = db.rawQuery("SELECT PolicyName FROM POLICIES WHERE PolicyID=" + curPolicy,null);
+                cur1.moveToFirst();
+
+                text = "Deleted Policy: " + cur1.getString(0);
+                dbHelper.deletePolicy(curPolicy);
+                loadFirstPolicy();
+                grid.invalidate();
+                updateSpinner();
+            }else{
+                // Don't allow the user to delete the last policy.
+                 text = "Error: Cannot delete last policy";
+            }
+            // Display the appropriate toast.
+            Toast toast = Toast.makeText(getApplicationContext(),text,Toast.LENGTH_SHORT);
+            toast.show();
+            cur1.close();
+        });
 
     }
     // Load the first policy. Used on initial load and when deleting the current policy.
