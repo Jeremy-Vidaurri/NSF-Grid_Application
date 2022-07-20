@@ -3,6 +3,7 @@ package com.example.abac;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
@@ -35,7 +36,15 @@ public class AddPolicy extends AppCompatActivity {
                 String name = fPolicyName.getText().toString().trim();
                 PolicyModel policyModel = new PolicyModel(-1,name,size);
                 dbHelper.addPolicy(policyModel);
-                // FIX: Add initializer for matrix
+
+                // Get the new ID and init the new matrix
+                Cursor cur = db.rawQuery("SELECT MAX(PolicyID) FROM Policies",null);
+                cur.moveToFirst();
+                int curPolicy = cur.getInt(0);
+                dbHelper.initMatrix(curPolicy,size);
+
+                cur.close();
+                // Go back to main activity
                 startActivity(new Intent(AddPolicy.this,MainActivity.class));
             }
         });
