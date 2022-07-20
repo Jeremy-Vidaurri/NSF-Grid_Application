@@ -72,11 +72,20 @@ public class customView extends View {
 
     // If the value in the grid is 1, paint it red.
     private void drawSquares(Canvas canvas) {
-        paint.setColor(Color.RED);
+
         for (int i = 0 ; i < amtRows; i++){
             for (int j = 0; j <amtRows; j++){
 
-                if (dbHelper.getValue(curPolicy,j,i) == 0) { // FIX: Add function to pass policyID? I'm not sure how to get the policy id otherwise.
+                if (dbHelper.getValue(curPolicy,j,i) == 0) {
+                    paint.setColor(Color.RED);
+                    canvas.drawRect(
+                            i * cellWidth,
+                            j * cellWidth,
+                            (i * cellWidth) + cellWidth,
+                            (j * cellWidth) + cellWidth,
+                            paint);
+                } else if (dbHelper.getValue(curPolicy,j,i) == 2) {
+                    paint.setColor(Color.YELLOW);
                     canvas.drawRect(
                             i * cellWidth,
                             j * cellWidth,
@@ -114,11 +123,13 @@ public class customView extends View {
             int j = (int) (event.getY() / cellWidth);
             Log.d(TAG,"i:" + i + "j:" + j);
 
-            // Toggle between 0 and 1
-            if(dbHelper.getValue(curPolicy,j,i)==1){ // Once again, pass policyID somehow
-                dbHelper.updateMatrix(curPolicy,j,i,0);
-            } else if (dbHelper.getValue(curPolicy,j,i)==0) {
+            // Toggle between 0, 1, and 2
+            if(dbHelper.getValue(curPolicy,j,i)==0){ // Once again, pass policyID somehow
                 dbHelper.updateMatrix(curPolicy,j,i,1);
+            } else if (dbHelper.getValue(curPolicy,j,i)==1) {
+                dbHelper.updateMatrix(curPolicy,j,i,2);
+            } else if (dbHelper.getValue(curPolicy,j,i)==2) {
+            dbHelper.updateMatrix(curPolicy,j,i,0);
             }
             // Redraw the grid
             invalidate();

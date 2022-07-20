@@ -21,7 +21,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /* TODO:
   * Implement method to send the matrix to drone.
-  * Implement yellow zones
 */
 
 
