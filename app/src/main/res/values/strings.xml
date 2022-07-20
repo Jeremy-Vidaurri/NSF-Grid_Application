@@ -15,4 +15,5 @@
     <string name="add_policy_field">Add Policy</string>
     <string name="policy_name_field">Policy Name</string>
     <string name="back">Back</string>
+    <string name="size">Size</string>
 </resources>

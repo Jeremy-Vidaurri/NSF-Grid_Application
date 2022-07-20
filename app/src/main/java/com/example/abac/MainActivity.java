@@ -20,7 +20,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 /* TODO:
   * Implement method to send the matrix to drone.
   * Add functionality to spinner
-  * Implement error checking for fields before adding a new policy.
   * Add a button delete the currently loaded policy. Don't allow the user to delete the last policy.
   * Implement yellow zones
 */
