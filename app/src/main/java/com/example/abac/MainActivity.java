@@ -19,7 +19,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 /* TODO:
   * Implement method to send the matrix to drone.
-  * Add functionality to spinner
   * Add a button delete the currently loaded policy. Don't allow the user to delete the last policy.
   * Implement yellow zones
 */
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SQLiteDatabase db;
     private PolicyModel policyModel;
     private int curPolicy;
-
+    private Spinner spinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +44,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         final FloatingActionButton button_add = findViewById(R.id.add_policy);
 
         updateSpinner();
+        spinner.setOnItemSelectedListener(this);
 
         // Check if the table is empty. If so, create a 20x20 table
         Cursor cur = db.rawQuery("SELECT COUNT(*) FROM Policies", null);
@@ -96,21 +96,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String[] orig = new String[]{"PolicyName"};
         int[] dest = new int[]{android.R.id.text1};
         SimpleCursorAdapter sca = new SimpleCursorAdapter(this, android.R.layout.simple_spinner_item,cur,orig,dest,0);
-
-        Spinner spinner = this.findViewById(R.id.spinner);
+        spinner = this.findViewById(R.id.spinner);
         spinner.setAdapter(sca);
     }
+
+
 
     // Used when selecting a policy on the Spinner.
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-        Log.d(TAG,"ID: " + id);
+        curPolicy = (int) id;
+        Cursor cur = db.rawQuery("SELECT size FROM Policies WHERE PolicyID=" + curPolicy,null);
+        cur.moveToFirst();
+        int size = cur.getInt(0);
+        cur.close();
+
+        grid.initGrid(size,curPolicy);
+        grid.invalidate();
     }
 
     // Likely will not be used, but required as we implemented AdapterView.OnItemSelectedListener
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-
+        Log.d(TAG,"Nothing selected.");
     }
 
 }

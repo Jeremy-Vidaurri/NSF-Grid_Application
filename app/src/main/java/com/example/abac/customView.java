@@ -76,7 +76,7 @@ public class customView extends View {
         for (int i = 0 ; i < amtRows; i++){
             for (int j = 0; j <amtRows; j++){
 
-                if (dbHelper.getValue(1,j,i) == 0) { // FIX: Add function to pass policyID? I'm not sure how to get the policy id otherwise.
+                if (dbHelper.getValue(curPolicy,j,i) == 0) { // FIX: Add function to pass policyID? I'm not sure how to get the policy id otherwise.
                     canvas.drawRect(
                             i * cellWidth,
                             j * cellWidth,
@@ -115,10 +115,10 @@ public class customView extends View {
             Log.d(TAG,"i:" + i + "j:" + j);
 
             // Toggle between 0 and 1
-            if(dbHelper.getValue(1,j,i)==1){ // Once again, pass policyID somehow
-                dbHelper.updateMatrix(1,j,i,0);
-            } else if (dbHelper.getValue(1,j,i)==0) {
-                dbHelper.updateMatrix(1,j,i,1);
+            if(dbHelper.getValue(curPolicy,j,i)==1){ // Once again, pass policyID somehow
+                dbHelper.updateMatrix(curPolicy,j,i,0);
+            } else if (dbHelper.getValue(curPolicy,j,i)==0) {
+                dbHelper.updateMatrix(curPolicy,j,i,1);
             }
             // Redraw the grid
             invalidate();
