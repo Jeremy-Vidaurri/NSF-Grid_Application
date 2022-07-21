@@ -123,14 +123,22 @@ public class customView extends View {
             int j = (int) (event.getY() / cellWidth);
             Log.d(TAG,"i:" + i + "j:" + j);
 
-            // Toggle between 0, 1, and 2
-            if(dbHelper.getValue(curPolicy,j,i)==0){ // Once again, pass policyID somehow
-                dbHelper.updateMatrix(curPolicy,j,i,1);
-            } else if (dbHelper.getValue(curPolicy,j,i)==1) {
-                dbHelper.updateMatrix(curPolicy,j,i,2);
-            } else if (dbHelper.getValue(curPolicy,j,i)==2) {
-            dbHelper.updateMatrix(curPolicy,j,i,0);
+            // Toggle between 0, 1, and 2 based on the current value.
+            int val = dbHelper.getValue(curPolicy,j,i);
+
+            switch(val){
+                case 0:
+                    val=1;
+                    break;
+                case 1:
+                    val=2;
+                    break;
+                case 2:
+                    val=0;
+                    break;
             }
+            dbHelper.updateMatrix(curPolicy,j,i,val);
+
             // Redraw the grid
             invalidate();
         }
