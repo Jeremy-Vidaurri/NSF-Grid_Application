@@ -70,13 +70,15 @@ public class customView extends View {
         drawLines(canvas);
     }
 
-    // If the value in the grid is 1, paint it red.
+    // If the value is 0, paint it red.
+    // If the value is 1, paint it yellow.
+    // Otherwise, there should be no square so that it appears green.
     private void drawSquares(Canvas canvas) {
-
+        int val;
         for (int i = 0 ; i < amtRows; i++){
             for (int j = 0; j <amtRows; j++){
-
-                if (dbHelper.getValue(curPolicy,j,i) == 0) {
+                val = dbHelper.getValue(curPolicy,j,i);
+                if (val == 0) {
                     paint.setColor(Color.RED);
                     canvas.drawRect(
                             i * cellWidth,
@@ -84,7 +86,7 @@ public class customView extends View {
                             (i * cellWidth) + cellWidth,
                             (j * cellWidth) + cellWidth,
                             paint);
-                } else if (dbHelper.getValue(curPolicy,j,i) == 2) {
+                } else if (val == 2) {
                     paint.setColor(Color.YELLOW);
                     canvas.drawRect(
                             i * cellWidth,
