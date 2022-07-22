@@ -58,11 +58,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 dbHelper.initMatrix(1,20);
                 curPolicy=1;
                 grid.initGrid(20,1);
+                updateSpinner();
             }else{
                 loadFirstPolicy();
             }
         }
         grid.invalidate();
+
 
         if (cur != null) {
             cur.close();
