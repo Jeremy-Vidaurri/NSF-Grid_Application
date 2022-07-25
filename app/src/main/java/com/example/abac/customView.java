@@ -90,21 +90,15 @@ public class customView extends View {
                 // Color the square according to its value
                 if (val == 0) {
                     paint.setColor(Color.RED);
-                    canvas.drawRect(
-                            column * cellWidth,
-                            row * cellWidth,
-                            (column * cellWidth) + cellWidth,
-                            (row * cellWidth) + cellWidth,
-                            paint);
-                } else if (val == 2) {
+                } else{
                     paint.setColor(Color.YELLOW);
-                    canvas.drawRect(
-                            column * cellWidth,
-                            row * cellWidth,
-                            (column * cellWidth) + cellWidth,
-                            (row * cellWidth) + cellWidth,
-                            paint);
                 }
+                canvas.drawRect(
+                        column * cellWidth,
+                        row * cellWidth,
+                        (column * cellWidth) + cellWidth,
+                        (row * cellWidth) + cellWidth,
+                        paint);
             }
         }
     }
