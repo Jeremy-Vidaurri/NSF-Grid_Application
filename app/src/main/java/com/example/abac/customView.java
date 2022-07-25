@@ -2,6 +2,7 @@ package com.example.abac;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -71,33 +72,41 @@ public class customView extends View {
     }
 
     // If the value is 0, paint it red.
-    // If the value is 1, paint it yellow.
+    // If the value is 2, paint it yellow.
     // Otherwise, there should be no square so that it appears green.
     private void drawSquares(Canvas canvas) {
-        int val;
-        for (int i = 0 ; i < amtRows; i++){
-            for (int j = 0; j <amtRows; j++){
-                val = dbHelper.getValue(curPolicy,j,i);
+        db = dbHelper.getWritableDatabase();
+
+        // Get all cords for where there is not a green zone
+        try (Cursor cur = db.query("Matrix", new String[]{"ColumnID", "RowID", "Value"}, "PolicyID=" + curPolicy + " AND Value!=1", null, null, null, null)) {
+            int row, column, val;
+            // For each red/yellow zone, grab the column, row, and value.
+            while (cur.moveToNext()) {
+                Log.d(TAG, "drawSquares: " + cur.getInt(0) + " " + cur.getInt(1) + " Value: " + cur.getInt(2));
+                column = cur.getInt(0);
+                row = cur.getInt(1);
+                val = cur.getInt(2);
+
+                // Color the square according to its value
                 if (val == 0) {
                     paint.setColor(Color.RED);
                     canvas.drawRect(
-                            i * cellWidth,
-                            j * cellWidth,
-                            (i * cellWidth) + cellWidth,
-                            (j * cellWidth) + cellWidth,
+                            column * cellWidth,
+                            row * cellWidth,
+                            (column * cellWidth) + cellWidth,
+                            (row * cellWidth) + cellWidth,
                             paint);
                 } else if (val == 2) {
                     paint.setColor(Color.YELLOW);
                     canvas.drawRect(
-                            i * cellWidth,
-                            j * cellWidth,
-                            (i * cellWidth) + cellWidth,
-                            (j * cellWidth) + cellWidth,
+                            column * cellWidth,
+                            row * cellWidth,
+                            (column * cellWidth) + cellWidth,
+                            (row * cellWidth) + cellWidth,
                             paint);
                 }
             }
         }
-
     }
 
     // Used to separate the squares
