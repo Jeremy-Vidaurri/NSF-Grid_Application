@@ -63,9 +63,9 @@ public class customView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Log.d(TAG, "onDraw");
-        cellWidth = getWidth() / amtRows;
 
+        cellWidth = getWidth() / amtRows;
+        Log.d(TAG, "cellWidth: " + cellWidth);
         canvas.drawColor(Color.GREEN);
         drawSquares(canvas);
         drawLines(canvas);
@@ -82,22 +82,22 @@ public class customView extends View {
             int row, column, val;
             // For each red/yellow zone, grab the column, row, and value.
             while (cur.moveToNext()) {
-                Log.d(TAG, "drawSquares: " + cur.getInt(0) + " " + cur.getInt(1) + " Value: " + cur.getInt(2));
                 column = cur.getInt(0);
                 row = cur.getInt(1);
                 val = cur.getInt(2);
-
+                Log.d(TAG, "drawSquares: " + row + " " +column + " Value: " + val);
                 // Color the square according to its value
                 if (val == 0) {
                     paint.setColor(Color.RED);
                 } else{
                     paint.setColor(Color.YELLOW);
                 }
+
                 canvas.drawRect(
                         column * cellWidth,
-                        row * cellWidth,
+                        (amtRows - row-1) * cellWidth,
                         (column * cellWidth) + cellWidth,
-                        (row * cellWidth) + cellWidth,
+                        ((amtRows - row-1) * cellWidth) + cellWidth,
                         paint);
             }
         }
@@ -124,12 +124,12 @@ public class customView extends View {
 
         // When a square is touched, get the position in the matrix and change its value
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            int i = (int) (event.getX() / cellWidth);
-            int j = (int) (event.getY() / cellWidth);
-            Log.d(TAG,"i:" + i + "j:" + j);
+            int i = (int) (amtRows - event.getY() / cellWidth );
+            int j = (int) (event.getX() / cellWidth);
+            Log.d(TAG,"i:" + i + " j:" + j);
 
             // Toggle between 0, 1, and 2 based on the current value.
-            int val = dbHelper.getValue(curPolicy,j,i);
+            int val = dbHelper.getValue(curPolicy,i,j);
 
             switch(val){
                 case 0:
@@ -142,7 +142,7 @@ public class customView extends View {
                     val=0;
                     break;
             }
-            dbHelper.updateMatrix(curPolicy,j,i,val);
+            dbHelper.updateMatrix(curPolicy,i,j,val);
 
             // Redraw the grid
             invalidate();
