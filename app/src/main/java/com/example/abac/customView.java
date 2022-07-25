@@ -96,8 +96,8 @@ public class customView extends View {
                 canvas.drawRect(
                         column * cellWidth,
                         (amtRows - row-1) * cellWidth,
-                        (column * cellWidth) + cellWidth,
-                        ((amtRows - row-1) * cellWidth) + cellWidth,
+                        (column+1) * cellWidth,
+                        (amtRows - row) * cellWidth,
                         paint);
             }
         }
