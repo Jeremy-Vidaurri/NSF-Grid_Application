@@ -78,14 +78,18 @@ public class customView extends View {
         db = dbHelper.getWritableDatabase();
 
         // Get all cords for where there is not a green zone
-        try (Cursor cur = db.query("Matrix", new String[]{"ColumnID", "RowID", "Value"}, "PolicyID=" + curPolicy + " AND Value!=1", null, null, null, null)) {
+        try (Cursor cur = db.query("Matrix", new String[]{"ColumnID", "RowID", "Value"},
+                "PolicyID=" + curPolicy + " AND Value!=1",
+                null, null, null, null)) {
             int row, column, val;
+
             // For each red/yellow zone, grab the column, row, and value.
             while (cur.moveToNext()) {
                 column = cur.getInt(0);
                 row = cur.getInt(1);
                 val = cur.getInt(2);
                 Log.d(TAG, "drawSquares: " + row + " " +column + " Value: " + val);
+
                 // Color the square according to its value
                 if (val == 0) {
                     paint.setColor(Color.RED);
