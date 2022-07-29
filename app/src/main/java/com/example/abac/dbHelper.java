@@ -41,13 +41,13 @@ public class dbHelper extends SQLiteOpenHelper {
                     COLUMN_NAME_POLICY_NAME + " TEXT," +
                     COLUMN_NAME_SIZE + " INTEGER" + ")";
 
-        String SQL_CREATE_MATRIX_TABLE = "CREATE TABLE " + MATRIX_TABLE_NAME + " (" +
-                COLUMN_NAME_POLICY_ID + " INTEGER," +
-                COLUMN_NAME_COLUMN_ID + " INTEGER," +
-                COLUMN_NAME_ROW_ID + " INTEGER," +
-                COLUMN_NAME_VALUE + " INTEGER," +
-                "PRIMARY KEY (" +COLUMN_NAME_POLICY_ID+","+COLUMN_NAME_COLUMN_ID+"," +
-                                COLUMN_NAME_ROW_ID +"))";
+            String SQL_CREATE_MATRIX_TABLE = "CREATE TABLE " + MATRIX_TABLE_NAME + " (" +
+                    COLUMN_NAME_POLICY_ID + " INTEGER," +
+                    COLUMN_NAME_COLUMN_ID + " INTEGER," +
+                    COLUMN_NAME_ROW_ID + " INTEGER," +
+                    COLUMN_NAME_VALUE + " INTEGER," +
+                    "PRIMARY KEY (" +COLUMN_NAME_POLICY_ID+","+COLUMN_NAME_COLUMN_ID+"," +
+                                    COLUMN_NAME_ROW_ID +"))";
 
 
         db.execSQL(SQL_CREATE_POLICIES_TABLE);
@@ -127,9 +127,9 @@ public class dbHelper extends SQLiteOpenHelper {
     }
 
     // Delete the given policy from both tables.
-    public void deletePolicy(int policyID){
+    public void deletePolicy(int policyID) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(POLICY_TABLE_NAME,"policyID="+policyID,null);
-        db.delete(MATRIX_TABLE_NAME,"policyID="+policyID,null);
+        db.delete(POLICY_TABLE_NAME, "policyID=" + policyID, null);
+        db.delete(MATRIX_TABLE_NAME, "policyID=" + policyID, null);
     }
 }

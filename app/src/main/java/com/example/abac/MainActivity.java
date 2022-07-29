@@ -1,10 +1,8 @@
 package com.example.abac;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,13 +12,32 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 /* TODO:
-  * Implement method to send the matrix to drone.
+  * Convert cursor to JSON
+  * Send JSON file to php server
+  * Test that the mysql updates properly
 */
 
 
@@ -35,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private int curPolicy;
     private Spinner spinner;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +61,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         db = dbHelper.getWritableDatabase();
         final FloatingActionButton button_add = findViewById(R.id.add_policy);
         Button button_del = findViewById(R.id.delButton);
+        Button button_deploy = findViewById(R.id.deploy_policy);
+
 
         updateSpinner();
         spinner.setOnItemSelectedListener(this);
@@ -99,6 +119,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             cur1.close();
         });
 
+
+        button_deploy.setOnClickListener(view -> {
+            JSONArray jsonArray = matrixJSON();
+            sendData(jsonArray);
+        });
     }
     // Load the first policy. Used on initial load and when deleting the current policy.
     public void loadFirstPolicy(){
@@ -150,4 +175,53 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d(TAG,"Nothing selected.");
     }
 
+    public JSONArray matrixJSON(){
+        Cursor cursor = db.rawQuery("SELECT columnID,rowID,value FROM Matrix WHERE PolicyID=" + curPolicy,null);
+
+        JSONArray resultSet = new JSONArray();
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            int totalColumn = cursor.getColumnCount();
+            JSONObject rowObject = new JSONObject();
+            for (int i = 0; i < totalColumn; i++) {
+                if (cursor.getColumnName(i) != null) {
+                    try {
+                        rowObject.put(cursor.getColumnName(i),
+                                cursor.getString(i));
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                }
+            }
+            resultSet.put(rowObject);
+            cursor.moveToNext();
+        }
+
+        cursor.close();
+        return resultSet;
+
+    }
+
+    public void sendData(JSONArray data) {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "http://10.123.20.180:8080/insertmatrix.php";
+
+        String json = data.toString();
+
+        StringRequest dataReq = new StringRequest(Request.Method.POST,url,response -> Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_LONG).show(),
+                error -> Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_LONG).show()){
+            @Override
+            protected Map<String,String> getParams(){
+                Map<String,String> params = new HashMap<String,String>();
+                params.put("data",json);
+
+                return params;
+            }
+
+        };
+
+        queue.add(dataReq);
+
+
+    }
 }
