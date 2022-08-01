@@ -12,34 +12,19 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONStringer;
 
 import java.util.HashMap;
 import java.util.Map;
-
-
-/* TODO:
-  * Convert cursor to JSON
-  * Send JSON file to php server
-  * Test that the mysql updates properly
-*/
-
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
@@ -48,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private customView grid;
     private final dbHelper dbHelper = new dbHelper(MainActivity.this);
     private SQLiteDatabase db;
-    private PolicyModel policyModel;
     private int curPolicy;
     private Spinner spinner;
 
@@ -73,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         if (cur!=null){
             cur.moveToFirst();
             if (cur.getInt(0)==0){
-                policyModel = new PolicyModel(-1, "Example Policy",20);
+                PolicyModel policyModel = new PolicyModel(-1, "Example Policy", 20);
                 dbHelper.addPolicy(policyModel);
                 dbHelper.initMatrix(1,20);
                 curPolicy=1;
@@ -90,6 +74,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             cur.close();
         }
 
+        // Add policy button switches to different activity.
         button_add.setOnClickListener(v -> startActivity(new Intent(MainActivity.this,AddPolicy.class)));
 
         // Functionality for deleting the current policy.
@@ -119,12 +104,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             cur1.close();
         });
 
-
+        // When clicking 'deploy', generate the JSON and send it to the server
         button_deploy.setOnClickListener(view -> {
             JSONArray jsonArray = matrixJSON();
             sendData(jsonArray);
         });
     }
+
     // Load the first policy. Used on initial load and when deleting the current policy.
     public void loadFirstPolicy(){
         // Select the first policyID in the table
@@ -154,8 +140,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spinner.setAdapter(sca);
     }
 
-
-
     // Used when selecting a policy on the Spinner.
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
@@ -175,11 +159,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Log.d(TAG,"Nothing selected.");
     }
 
+    // Generates a JSON Array from the policy that is selected.
     public JSONArray matrixJSON(){
         Cursor cursor = db.rawQuery("SELECT columnID,rowID,value FROM Matrix WHERE PolicyID=" + curPolicy,null);
 
         JSONArray resultSet = new JSONArray();
         cursor.moveToFirst();
+        // For each row in the table, put each column into a JSON Object.
+        // Each Object gets placed into the array
         while (!cursor.isAfterLast()) {
             int totalColumn = cursor.getColumnCount();
             JSONObject rowObject = new JSONObject();
@@ -202,26 +189,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     }
 
+    // Sends the JSONArray to the PHP server so that it may update the SQL tables with proper information.
     public void sendData(JSONArray data) {
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "http://10.123.20.180:8080/insertmatrix.php";
 
+        // Switch it to a string so that it can be sent to the server as a POST request.
         String json = data.toString();
 
+        // Generate the request
         StringRequest dataReq = new StringRequest(Request.Method.POST,url,response -> Toast.makeText(MainActivity.this, "Success", Toast.LENGTH_LONG).show(),
                 error -> Toast.makeText(MainActivity.this, "Error", Toast.LENGTH_LONG).show()){
             @Override
             protected Map<String,String> getParams(){
-                Map<String,String> params = new HashMap<String,String>();
+                Map<String,String> params = new HashMap<>();
                 params.put("data",json);
 
                 return params;
             }
 
         };
-
+        // Add the request
         queue.add(dataReq);
-
-
     }
 }
