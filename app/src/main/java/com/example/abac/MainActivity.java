@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -192,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // Sends the JSONArray to the PHP server so that it may update the SQL tables with proper information.
     public void sendData(JSONArray data) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://10.123.20.180:8080/insertmatrix.php";
+        String url = "http://10.0.2.2:8080/insertmatrix.php";
 
         // Switch it to a string so that it can be sent to the server as a POST request.
         String json = data.toString();
@@ -209,6 +211,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
         };
+        dataReq.setRetryPolicy(new RetryPolicy() {
+            @Override
+            public int getCurrentTimeout() {
+                return 30000;
+            }
+
+            @Override
+            public int getCurrentRetryCount() {
+                return 30000;
+            }
+
+            @Override
+            public void retry(VolleyError error) throws VolleyError {
+
+            }
+        });
         // Add the request
         queue.add(dataReq);
     }
