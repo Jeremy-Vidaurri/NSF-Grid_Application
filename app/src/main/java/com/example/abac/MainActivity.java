@@ -163,7 +163,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     // Generates a JSON Array from the policy that is selected.
     public JSONArray matrixJSON(){
-        Cursor cursor = db.rawQuery("SELECT columnID,rowID,value FROM Matrix WHERE PolicyID=" + curPolicy,null);
+        // Only select the zones that are red or yellow as those are the necessary values for the path planning.
+        Cursor cursor = db.rawQuery("SELECT columnID,rowID,value FROM Matrix WHERE PolicyID=" + curPolicy +
+                " AND value!=1",null);
 
         JSONArray resultSet = new JSONArray();
         cursor.moveToFirst();
@@ -194,7 +196,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // Sends the JSONArray to the PHP server so that it may update the SQL tables with proper information.
     public void sendData(JSONArray data) {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://10.0.2.2:8080/insertmatrix.php";
+        String url = "http://10.0.2.2:80/insertmatrix.php";
 
         // Switch it to a string so that it can be sent to the server as a POST request.
         String json = data.toString();
