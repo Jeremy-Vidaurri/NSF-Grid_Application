@@ -65,7 +65,7 @@ public class customView extends View {
         super.onDraw(canvas);
 
         cellWidth = getWidth() / amtRows;
-        Log.d(TAG, "cellWidth: " + cellWidth);
+        //Log.d(TAG, "cellWidth: " + cellWidth);
         canvas.drawColor(Color.GREEN);
         drawSquares(canvas);
         drawLines(canvas);
@@ -88,7 +88,7 @@ public class customView extends View {
                 column = cur.getInt(0);
                 row = cur.getInt(1);
                 val = cur.getInt(2);
-                Log.d(TAG, "drawSquares: " + row + " " +column + " Value: " + val);
+                //Log.d(TAG, "drawSquares: " + row + " " +column + " Value: " + val);
 
                 // Color the square according to its value
                 if (val == 0) {
@@ -124,13 +124,13 @@ public class customView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        Log.d(TAG, "onTouch X:" + event.getX() + " Y:" + event.getY());
+        //Log.d(TAG, "onTouch X:" + event.getX() + " Y:" + event.getY());
 
         // When a square is touched, get the position in the matrix and change its value
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int i = (int) (amtRows - event.getY() / cellWidth );
             int j = (int) (event.getX() / cellWidth);
-            Log.d(TAG,"i:" + i + " j:" + j);
+            //Log.d(TAG,"i:" + i + " j:" + j);
 
             // Toggle between 0, 1, and 2 based on the current value.
             int val = dbHelper.getValue(curPolicy,i,j);

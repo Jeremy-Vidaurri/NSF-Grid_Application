@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     // Likely will not be used, but required as we implemented AdapterView.OnItemSelectedListener
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-        Log.d(TAG,"Nothing selected.");
+        //Log.d(TAG,"Nothing selected.");
     }
 
     // Generates a JSON Array from the policy that is selected.
@@ -178,7 +178,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         rowObject.put(cursor.getColumnName(i),
                                 cursor.getString(i));
                     } catch (Exception e) {
-                        Log.d(TAG, e.getMessage());
+                        //Log.d(TAG, e.getMessage());
                     }
                 }
             }
@@ -223,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
 
             @Override
-            public void retry(VolleyError error) throws VolleyError {
+            public void retry(VolleyError error) {
 
             }
         });
